@@ -31,8 +31,21 @@ User.init({
         allowNull:false
     },
     gender:{
-        type:DataTypes.STRING,
+        type:DataTypes.ENUM("female","male","others"),
         allowNull:false
+    },
+    age:{
+       type:DataTypes.INTEGER,
+       allowNull:true 
+    },
+    date_of_birth:{
+       type:DataTypes.DATE,
+       allowNull:true
+    },
+    type:{
+        type:DataTypes.ENUM("admin","customer","seller","delivery"),
+        allowNull:false,
+        defaultValue:"customer"
     }
 
 },{

@@ -11,6 +11,11 @@ export const seedUsers = async () => {
         location: "Nyamirambo",
         gender: "male",
         password: hashPassword,
+        age:30,
+        date_of_birth:"01/01/2000",
+        type:"customer"
+      
+
       },
       {
         fullName: "Kamanzi",
@@ -19,6 +24,9 @@ export const seedUsers = async () => {
         location: "Nyamirambo",
         gender: "male",
         password: hashPassword,
+        age:20,
+        date_of_birth:"01/02/2000",
+        type:"seller"
       },
       {
         fullName: "Deborah",
@@ -27,6 +35,20 @@ export const seedUsers = async () => {
         location: "Nyamirambo",
         gender: "female",
         password: hashPassword,
+        age:40,
+        date_of_birth:"03/01/2001",
+        type:"delivery"
+      },
+      {
+        fullName: "ston",
+        email: "ston@gmail.com",
+        phoneNumber: "0781232233",
+        location: "Musanze",
+        gender: "male",
+        password: hashPassword,
+        age:20,
+        date_of_birth:"03/01/2001",
+        type:"admin"
       },
     ];
     await User.bulkCreate(users, {ignoreDuplicates: true});
