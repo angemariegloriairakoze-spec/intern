@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 
 export const seedUsers = async () => {
     const hashPassword = await bcrypt.hash("password123",10)
+    const adminHashPassword = await bcrypt.hash("angel@23",10)
     const users = [
       {
         fullName: "Kamayirese",
@@ -40,14 +41,14 @@ export const seedUsers = async () => {
         role:"delivery"
       },
       {
-        fullName: "ston",
-        email: "ston@gmail.com",
-        phoneNumber: "0781232233",
-        location: "Musanze",
-        gender: "male",
-        password: "angel@123",
-        age:20,
-        date_of_birth:"03/01/2001",
+        fullName: "Angel Marie Irakoze",
+        email: "angemariegloriairakoze@gmail.com",
+        phoneNumber: "0781234567",
+        location: "Kigali",
+        gender: "female",
+        password: adminHashPassword,
+        age:25,
+        date_of_birth:"01/01/1999",
         role:"admin"
       },
     ];

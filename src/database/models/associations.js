@@ -1,7 +1,8 @@
 import User from "./user.js";
-import Product from "./product.js";
-import Order from "./order.js";
-import Payment from "./payment.js";
+import Product from "./products.js";
+import Shop from "./shops.js";
+import Order from "./orders.js";
+import Payment from "./payments.js";
 
 /*
 ====================================
@@ -68,4 +69,40 @@ Order.hasOne(Payment, {
 
 Payment.belongsTo(Order, {
     foreignKey: "orderId"
+});
+
+
+/*
+====================================
+SHOP × PRODUCT
+One shop can have many products
+Each product belongs to one shop
+====================================
+*/
+
+Shop.hasMany(Product, {
+    foreignKey: "shop_id"
+});
+
+Product.belongsTo(Shop, {
+    foreignKey: "shop_id"
+});
+
+
+/*
+====================================
+USER × SHOP (SELLER)
+One user (seller) can own many shops
+Each shop belongs to one user (seller)
+====================================
+*/
+
+User.hasMany(Shop, {
+    foreignKey: "owner",
+    as: "ownedShops"
+});
+
+Shop.belongsTo(User, {
+    foreignKey: "owner",
+    as: "owner"
 });

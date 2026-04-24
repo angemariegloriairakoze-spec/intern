@@ -25,35 +25,33 @@ export const singleOrder = async (req, res) => {
 
 export const createOrder = async (req, res) => {
     try {
-        const { shopName, productName, size, quantity } = req.body;
+        const { product_id, quantity } = req.body;
         
-        // Find the shop first
-        const shop = await Shop.findOne({ where: { name: shopName } });
+        if (!product_id || !quantity) {
+            return res.status(400).json({ message: "product_id and quantity are required" });
+        }
+        
+        // Find the product first
+        const product = await Product.findByPk(product_id);
+        if (!product) return res.status(404).json({ message: "Product not found" });
+        
+        // Find the shop that owns this product
+        const shop = await Shop.findByPk(product.shop_id);
         if (!shop) return res.status(404).json({ message: "Shop not found" });
         
-        // Find product by shop and product name/size
-        const product = await Product.findOne({ 
-            where: { 
-                name: productName, 
-                size: size,
-                forShop: shop.id
-            } 
-        });
-        if (!product) return res.status(404).json({ message: "Product not found in this shop" });
-        
-        const totalAmount = parseFloat(product.price) * (quantity || 1);
+        const totalAmount = parseFloat(product.price) * quantity;
         const order = await Order.create({
             userId: req.user.id,
             productId: product.id,
             sellerId: shop.owner,
-            quantity: quantity || 1,
+            quantity: quantity,
             totalAmount: totalAmount
         });
         
         await Notification.create({
             userId: shop.owner,
             title: "New Order Received",
-            message: `You have a new order for ${quantity || 1} x ${product.name} (${product.size}) from ${shop.name}. Total: $${totalAmount}`,
+            message: `You have a new order for ${quantity} x ${product.name} (${product.size}) from ${shop.name}. Total: $${totalAmount}`,
             type: "new_order",
             orderId: order.id
         });

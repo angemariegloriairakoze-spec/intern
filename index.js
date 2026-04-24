@@ -17,6 +17,7 @@ const PORT=process.env.PORT||5000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static('frontend'));
 app.use('/api',authRoutes);
 app.use('/api',userRoutes);
 app.use('/api',productRoutes);
@@ -43,9 +44,18 @@ app.use(
   })
 );
 
-
 sequelize.authenticate().then(()=>sequelize.sync())
 .then(()=>{
+    // Fallback routes for SPA - serve index.html for frontend routes
+    // These must be AFTER all API routes are defined
+    app.get('/', (req, res) => {
+      res.sendFile('index.html', { root: 'frontend' });
+    });
+    
+    app.get('/pages/:page', (req, res) => {
+      res.sendFile(`${req.params.page}.html`, { root: 'frontend/pages' });
+    });
+
     app.listen(PORT,()=>{
         console.log("Database connect successfully 🔥🔥" );
         console.log(`Our server is running on http://localhost:${PORT} `);

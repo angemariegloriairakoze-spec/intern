@@ -1,6 +1,6 @@
 import Order from "../models/orders.js";
 import User from "../models/users.js";
-import Product from "../models/product.js";
+import Product from "../models/products.js";
 
 export const seedOrders = async () => {
     try {

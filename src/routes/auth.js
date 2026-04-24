@@ -4,6 +4,6 @@ import { login, Register } from "../controllers/auth.js";
 const authRoutes= express.Router();
 
 authRoutes.post("/register",Register);
-authRoutes.post("/signin",login);
+authRoutes.post("/login",login);
 
 export default authRoutes;

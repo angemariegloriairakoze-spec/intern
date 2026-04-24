@@ -38,7 +38,7 @@ Product.init({
         type: DataTypes.ENUM("available", "hold_in_stock", "unAvailable"),
         defaultValue: "available"
     },
-    forShop:{
+    shop_id:{
         type:DataTypes.UUID,
         allowNull:false
     }

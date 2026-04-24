@@ -23,22 +23,32 @@ export const singleProduct = async (req, res) => {
     }
 };
 
-// create product
+// create product (for sellers)
 export const createProduct = async (req, res) => {
     try {
         const existingProduct = await Product.findOne({ where: { name: req.body.name } });
         if (existingProduct) return res.status(400).json({ message: "Product with that name already exists" });
         
-        // Handle forShop - if it's a string (shop name), convert to shop ID
-        let forShopId = req.body.forShop;
-        if (typeof forShopId === 'string' && forShopId.length !== 36) {
-            const shop = await Shop.findOne({ where: { name: forShopId, owner: req.user.id } });
-            if (!shop) return res.status(404).json({ message: "Shop not found or you don't own this shop" });
-            forShopId = shop.id;
-        }
+        // Handle shop_id - seller must provide shop_id
+        const shopId = req.body.shop_id;
+        if (!shopId) return res.status(400).json({ message: "shop_id is required" });
         
-        const product = await Product.create({ ...req.body, forShop: forShopId });
-        res.status(201).json({ message: "Product created successfully", product });
+        // Verify the shop exists and belongs to the seller
+        const shop = await Shop.findOne({ where: { id: shopId, owner: req.user.id } });
+        if (!shop) return res.status(404).json({ message: "Shop not found or you don't own this shop" });
+        
+        const product = await Product.create({ ...req.body, shop_id: shopId });
+        
+        // Include shop name in the response
+        const productWithShopName = {
+            ...product.toJSON(),
+            shop_name: shop.name
+        };
+        
+        res.status(201).json({ 
+            message: "Product created successfully", 
+            product: productWithShopName 
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -63,6 +73,37 @@ export const deleteProduct = async (req, res) => {
         if (!findProduct) return res.status(404).json({ message: "Product you need to delete is not found!" });
         await findProduct.destroy();
         res.status(200).json({ message: "Good bye, product deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// create order product (for customers - only product_id and quantity)
+export const createOrderProduct = async (req, res) => {
+    try {
+        const { product_id, quantity } = req.body;
+        
+        if (!product_id || !quantity) {
+            return res.status(400).json({ message: "product_id and quantity are required" });
+        }
+        
+        // Verify the product exists
+        const product = await Product.findByPk(product_id);
+        if (!product) return res.status(404).json({ message: "Product not found" });
+        
+        // Get shop information for the response
+        const shop = await Shop.findByPk(product.shop_id);
+        
+        const productWithShopName = {
+            ...product.toJSON(),
+            shop_name: shop ? shop.name : null,
+            requested_quantity: quantity
+        };
+        
+        res.status(200).json({ 
+            message: "Product added to order", 
+            product: productWithShopName 
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

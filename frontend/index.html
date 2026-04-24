@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angel's M - E-Commerce Platform</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">Angel's M</a>
+            <div class="navbar-nav">
+                <a href="index.html">Home</a>
+                <a href="#products">Products</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+                <div id="nav-user-area">
+                    <a href="pages/login.html" class="btn btn-sm btn-primary">Log In</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Welcome to Angel's M</h1>
+            <p>Your trusted e-commerce platform for quality products and exceptional service</p>
+            <div>
+                <a href="pages/register.html" class="btn btn-lg btn-secondary">Get Started</a>
+                <a href="#products" class="btn btn-lg btn-outline" style="margin-left: 1rem;">Browse Products</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="container" style="padding: 4rem 0;">
+        <div class="text-center mb-5">
+            <h2>Why Choose Angel's M?</h2>
+            <p style="color: var(--gray-600); margin-top: 1rem;">We provide the best shopping experience with our innovative platform</p>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🛍️</div>
+                        <h3>Wide Selection</h3>
+                        <p style="color: var(--gray-600);">Browse through our extensive collection of quality products from trusted sellers</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+                        <h3>Secure Shopping</h3>
+                        <p style="color: var(--gray-600);">Shop with confidence knowing your transactions are protected and secure</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🚚</div>
+                        <h3>Fast Delivery</h3>
+                        <p style="color: var(--gray-600);">Quick and reliable delivery to get your products to you in no time</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" style="background: var(--white); padding: 4rem 0;">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2>Featured Products</h2>
+                <p style="color: var(--gray-600); margin-top: 1rem;">Discover our most popular items</p>
+            </div>
+            <div class="product-grid" id="featured-products">
+                <!-- Products will be loaded here dynamically -->
+            </div>
+            <div class="text-center mt-5">
+                <button class="btn btn-primary" onclick="loadAllProducts()">View All Products</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="container" style="padding: 4rem 0;">
+        <div class="row align-center">
+            <div class="col-6">
+                <h2>About Angel's M</h2>
+                <p style="color: var(--gray-600); margin: 1rem 0;">
+                    Angel's M is a modern e-commerce platform designed to connect buyers and sellers in a seamless, secure, and efficient marketplace. Our mission is to provide exceptional shopping experiences while empowering local businesses to reach more customers.
+                </p>
+                <p style="color: var(--gray-600); margin: 1rem 0;">
+                    Whether you're a customer looking for quality products or a seller wanting to grow your business, Angel's M offers the tools and features you need to succeed in today's digital marketplace.
+                </p>
+                <div class="mt-4">
+                    <div class="d-flex align-center mb-3">
+                        <div style="font-size: 1.5rem; margin-right: 1rem;">✓</div>
+                        <div>
+                            <strong>Quality Assurance</strong>
+                            <p style="color: var(--gray-600); margin: 0;">All products are verified for quality</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-center mb-3">
+                        <div style="font-size: 1.5rem; margin-right: 1rem;">✓</div>
+                        <div>
+                            <strong>Customer Support</strong>
+                            <p style="color: var(--gray-600); margin: 0;">24/7 support for all your needs</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-center">
+                        <div style="font-size: 1.5rem; margin-right: 1rem;">✓</div>
+                        <div>
+                            <strong>Easy Returns</strong>
+                            <p style="color: var(--gray-600); margin: 0;">Hassle-free return policy</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div style="background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); border-radius: var(--border-radius); padding: 3rem; text-align: center; color: var(--white);">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">👼</div>
+                    <h3>Join Our Community</h3>
+                    <p style="margin: 1rem 0; opacity: 0.9;">Become part of our growing community of satisfied customers and successful sellers</p>
+                    <a href="pages/register.html" class="btn btn-lg btn-secondary">Sign Up Now</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" style="background: var(--gray-100); padding: 4rem 0;">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2>Get In Touch</h2>
+                <p style="color: var(--gray-600); margin-top: 1rem;">Have questions? We'd love to hear from you</p>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div style="font-size: 2rem; margin-bottom: 1rem;">📧</div>
+                            <h4>Email</h4>
+                            <p style="color: var(--gray-600);">support@angels-m.com</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div style="font-size: 2rem; margin-bottom: 1rem;">📞</div>
+                            <h4>Phone</h4>
+                            <p style="color: var(--gray-600);">+250 788 123 456</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div style="font-size: 2rem; margin-bottom: 1rem;">📍</div>
+                            <h4>Location</h4>
+                            <p style="color: var(--gray-600);">Kigali, Rwanda</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: var(--gray-800); color: var(--white); padding: 2rem 0;">
+        <div class="container">
+            <div class="row">
+                <div class="col-4">
+                    <h4>Angel's M</h4>
+                    <p style="color: var(--gray-400); margin-top: 1rem;">Your trusted e-commerce partner for quality products and exceptional service.</p>
+                </div>
+                <div class="col-4">
+                    <h4>Quick Links</h4>
+                    <div style="margin-top: 1rem;">
+                        <div><a href="index.html" style="color: var(--gray-400); text-decoration: none;">Home</a></div>
+                        <div><a href="#products" style="color: var(--gray-400); text-decoration: none;">Products</a></div>
+                        <div><a href="#about" style="color: var(--gray-400); text-decoration: none;">About</a></div>
+                        <div><a href="#contact" style="color: var(--gray-400); text-decoration: none;">Contact</a></div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <h4>Account</h4>
+                    <div style="margin-top: 1rem;">
+                        <div><a href="pages/login.html" style="color: var(--gray-400); text-decoration: none;">Login</a></div>
+                        <div><a href="pages/register.html" style="color: var(--gray-400); text-decoration: none;">Register</a></div>
+                        <div><a href="pages/dashboard.html" style="color: var(--gray-400); text-decoration: none;">Dashboard</a></div>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--gray-700); color: var(--gray-400);">
+                <p>&copy; 2024 Angel's M. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        // Load featured products on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNavbar();
+            loadFeaturedProducts();
+        });
+
+        async function loadFeaturedProducts() {
+            try {
+                const products = await api.getAllProducts();
+                const featuredContainer = document.getElementById('featured-products');
+                
+                // Show first 6 products as featured
+                const featuredProducts = products.slice(0, 6);
+                
+                featuredContainer.innerHTML = featuredProducts.map(product => `
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="${product.image || 'https://via.placeholder.com/300x200'}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">${product.name}</h3>
+                            <div class="product-price">$${product.price}</div>
+                            <p class="product-description">${product.description || 'Quality product from trusted seller'}</p>
+                            <button class="btn btn-primary w-100" onclick="viewProduct('${product.id}')">View Details</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading products:', error);
+                document.getElementById('featured-products').innerHTML = '<p style="text-align: center; color: var(--gray-600);">Unable to load products at this time.</p>';
+            }
+        }
+
+        function loadAllProducts() {
+            // Redirect to dashboard or products page
+            const user = getUser();
+            if (user && getToken()) {
+                window.location.href = 'pages/dashboard.html';
+            } else {
+                window.location.href = 'pages/login.html';
+            }
+        }
+
+        function viewProduct(productId) {
+            // Store product ID and redirect to product details or login
+            localStorage.setItem('viewProduct', productId);
+            const user = getUser();
+            if (user && getToken()) {
+                window.location.href = 'pages/dashboard.html';
+            } else {
+                window.location.href = 'pages/login.html';
+            }
+        }
+    </script>
+</body>
+</html>

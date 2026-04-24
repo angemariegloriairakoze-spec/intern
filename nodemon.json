@@ -1,7 +1,0 @@
-{
-  "ignore": [
-    "swagger-output.json",
-    "*.log",
-    "node_modules"
-  ]
-}
