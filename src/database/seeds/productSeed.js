@@ -1,44 +1,80 @@
 import Product from "../models/products.js";
+import Shop from "../models/shops.js";
 
 export const seedProducts = async () => {
+    // Get shops to associate products with
+    const shops = await Shop.findAll();
+    if (shops.length === 0) {
+        console.log("No shops found, skipping product seeding");
+        return;
+    }
+
     const products = [
         {
-            productName: "pants",
-            productPrice: 999.99,
-            productSize: "large",
-            type: "trousers",
+            name: "Classic Pants",
+            price: "999.99",
+            size: "large",
+            type: "gabo",
             description: "Comfortable and stylish pants for everyday wear.",
-            IMAGE: "pants.jpg",
-            status: "available"
+            image: "pants.jpg",
+            status: "available",
+            shop_id: shops[0].id
         },
         {
-            productName: "t-shirt",
-            productPrice: 29.99,
-            productSize: "medium",
-            type: "clothing",
+            name: "Premium T-Shirt",
+            price: "29.99",
+            size: "medium",
+            type: "gabo",
             description: "Comfortable and stylish t-shirt for everyday wear.",
-            IMAGE: "tshirt.jpg",
-            status: "available"
+            image: "tshirt.jpg",
+            status: "available",
+            shop_id: shops[0].id
         },
         {
-            productName: "boxer",
-            productPrice: 79.99,
-            productSize: "small",
-            type: "clothing",
+            name: "Comfort Boxer Shorts",
+            price: "79.99",
+            size: "small",
+            type: "abana",
             description: "Comfortable and stylish boxer shorts for everyday wear.",
-            IMAGE: "boxer.jpg",
-            status: "available"
+            image: "boxer.jpg",
+            status: "available",
+            shop_id: shops[1].id
         },
         {
-            productName: "jumper",
-            productPrice: 299.99,
-            productSize: "large",
-            type: "clothing",
+            name: "Warm Jumper",
+            price: "299.99",
+            size: "large",
+            type: "gabo",
             description: "Warm and comfortable jumper for cold weather.",
-            IMAGE: "jumper.jpg",
-            status: "available"
+            image: "jumper.jpg",
+            status: "available",
+            shop_id: shops[1].id
         },
+        {
+            name: "Sports Shoes",
+            price: "120.00",
+            size: "42",
+            type: "gabo",
+            description: "Comfortable running shoes for sports activities",
+            image: "shoes.jpg",
+            status: "available",
+            shop_id: shops[0].id
+        },
+        {
+            name: "Kids T-Shirt",
+            price: "15.00",
+            size: "small",
+            type: "abana",
+            description: "Comfortable t-shirt for kids",
+            image: "kids-tshirt.jpg",
+            status: "available",
+            shop_id: shops[1].id
+        }
     ];
-    await Product.bulkCreate(products, { ignoreDuplicates: true });
+    // Delete all existing products first
+    await Product.destroy({ where: {}, force: true });
+    console.log("Existing products deleted.");
+    // Then create new products
+    await Product.bulkCreate(products);
     console.log("products seeded successfully");
 };

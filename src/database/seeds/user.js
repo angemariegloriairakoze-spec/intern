@@ -52,5 +52,12 @@ export const seedUsers = async () => {
         role:"admin"
       },
     ];
-    await User.bulkCreate(users, {ignoreDuplicates: true});
+    
+    // Delete all existing users first to prevent duplicates
+    await User.destroy({ where: {}, force: true });
+    console.log("Existing users deleted.");
+    
+    // Then create new users
+    await User.bulkCreate(users);
+    console.log("users seeded successfully");
 }

@@ -51,7 +51,7 @@
         }
       }
     },
-    "/api/signin": {
+    "/api/login": {
       "post": {
         "description": "",
         "parameters": [
@@ -254,6 +254,9 @@
               "properties": {
                 "name": {
                   "example": "any"
+                },
+                "shop_id": {
+                  "example": "any"
                 }
               }
             }
@@ -265,6 +268,45 @@
           },
           "400": {
             "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/createOrderProduct": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "product_id": {
+                  "example": "any"
+                },
+                "quantity": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -367,10 +409,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "productName": {
-                  "example": "any"
-                },
-                "size": {
+                "product_id": {
                   "example": "any"
                 },
                 "quantity": {
@@ -383,6 +422,9 @@
         "responses": {
           "201": {
             "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "404": {
             "description": "Not Found"

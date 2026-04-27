@@ -321,16 +321,22 @@ function register() {
     }),
   })
     .then(function (res) {
-      if (!res.ok) throw new Error("Registration failed");
-      return res.json();
+      return res.json().then(function(data) {
+        if (!res.ok) {
+          throw new Error(data.message || data.error || "Registration failed");
+        }
+        return data;
+      });
     })
-    .then(function () {
-      // Redirect to login page with success indicator
+    .then(function (data) {
+      // Show success message and redirect
+      console.log("Registration successful:", data);
       window.location.href = "login.html?registered=1";
     })
     .catch(function (err) {
-      // Show error and re-enable button
-      showFormError("reg-error", "Registration failed. Please try again.");
+      // Show actual error message and re-enable button
+      console.error("Registration error:", err);
+      showFormError("reg-error", err.message || "Registration failed. Please try again.");
       btn.disabled = false;
       btn.textContent = "Create Account";
     });
