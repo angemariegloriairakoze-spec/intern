@@ -21,8 +21,8 @@
  */
 
 // Backend API endpoints for authentication
-var AUTH_URL = "http://localhost:5000/api/login";      // Login endpoint
-var USER_url = "http://localhost:5000/api/register";   // Registration endpoint
+var AUTH_URL = "/api/login";      // Login endpoint
+var USER_url = "/api/register";   // Registration endpoint
 
 /*
  * JWT TOKEN DECODING
