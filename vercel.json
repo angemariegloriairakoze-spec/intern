@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "index.js",
+      "src": "backend/index.js",
       "use": "@vercel/node"
     },
     {
@@ -13,7 +13,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/index.js"
+      "dest": "/backend/index.js"
     },
     {
       "src": "/(.*)",
@@ -21,10 +21,16 @@
     }
   ],
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "DB_HOST": "@db_host",
+    "DB_PORT": "@db_port",
+    "DB_USER": "@db_user",
+    "DB_PASSWORD": "@db_password",
+    "DB_NAME": "@db_name",
+    "JWT_SECRET": "@jwt_secret"
   },
   "functions": {
-    "index.js": {
+    "backend/index.js": {
       "runtime": "nodejs18.x"
     }
   }
