@@ -257,12 +257,9 @@
                 },
                 "shop_id": {
                   "example": "any"
-<<<<<<< HEAD:backend/swagger-output.json
                 },
                 "quantity": {
                   "example": "any"
-=======
->>>>>>> fb429c15b653407fdf82eeaab943bed235ea9841:swagger-output.json
                 }
               }
             }
