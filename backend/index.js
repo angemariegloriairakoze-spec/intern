@@ -49,7 +49,7 @@ sequelize.authenticate().then(()=>sequelize.sync())
     // Fallback routes for SPA - serve index.html for frontend routes
     // These must be AFTER all API routes are defined
     app.get('/', (req, res) => {
-      res.sendFile('index.html', { root: '../frontend' });
+      res.sendFile('index.html', { root: '../frontend/pages' });
     });
     
     app.get('/pages/:page', (req, res) => {
