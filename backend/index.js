@@ -18,6 +18,7 @@ const PORT=process.env.PORT||5000;
 app.use(cors());
 app.use(express.json());
 app.use(express.static('../frontend'));
+app.use(express.static('../frontend/pages'));
 app.use('/api',authRoutes);
 app.use('/api',userRoutes);
 app.use('/api',productRoutes);
@@ -49,6 +50,10 @@ sequelize.authenticate().then(()=>sequelize.sync())
     // Fallback routes for SPA - serve index.html for frontend routes
     // These must be AFTER all API routes are defined
     app.get('/', (req, res) => {
+      res.sendFile('index.html', { root: '../frontend/pages' });
+    });
+    
+    app.get('/index.html', (req, res) => {
       res.sendFile('index.html', { root: '../frontend/pages' });
     });
     
