@@ -22,11 +22,11 @@
   ],
   "env": {
     "NODE_ENV": "production",
-    "DB_HOST": "@db_host",
-    "DB_PORT": "@db_port",
-    "DB_USER": "@db_user",
-    "DB_PASSWORD": "@db_password",
-    "DB_NAME": "@db_name",
-    "JWT_SECRET": "@jwt_secret"
+    "DB_HOST": "127.0.0.1",
+    "DB_PORT": "3306",
+    "DB_USER": "root",
+    "DB_PASSWORD": "",
+    "DB_NAME": "internship",
+    "JWT_SECRET": "mysecretkey123"
   }
 }
