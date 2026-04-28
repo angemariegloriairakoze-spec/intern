@@ -68,3 +68,6 @@ sequelize.authenticate().then(()=>sequelize.sync())
 }
 );
 
+// Export for Vercel serverless deployment
+export default app;
+
