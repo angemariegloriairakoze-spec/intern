@@ -28,10 +28,5 @@
     "DB_PASSWORD": "@db_password",
     "DB_NAME": "@db_name",
     "JWT_SECRET": "@jwt_secret"
-  },
-  "functions": {
-    "backend/index.js": {
-      "runtime": "nodejs18.x"
-    }
   }
 }
