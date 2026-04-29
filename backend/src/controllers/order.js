@@ -53,6 +53,14 @@ export const createOrder = async (req, res) => {
         const shop = await Shop.findByPk(product.shop_id);
         if (!shop) return res.status(404).json({ message: "Shop not found" });
         
+        // Get customer details for seller notification
+        const customer = await User.findByPk(req.user.id);
+        if (!customer) return res.status(404).json({ message: "Customer not found" });
+        
+        // Get shop owner details for customer notification
+        const shopOwner = await User.findByPk(shop.owner);
+        if (!shopOwner) return res.status(404).json({ message: "Shop owner not found" });
+        
         const totalAmount = parseFloat(product.price) * quantity;
         const order = await Order.create({
             userId: req.user.id,
@@ -62,17 +70,21 @@ export const createOrder = async (req, res) => {
             totalAmount: totalAmount
         });
         
-        // Get customer details for seller notification
-        const customer = await User.findByPk(req.user.id);
-        const customerInfo = customer ? 
-            `Customer: ${customer.fullName}, Age: ${customer.age || 'Not specified'}, Gender: ${customer.gender}, Location: ${customer.location}, Phone: ${customer.phoneNumber}` 
-            : 'Customer details not available';
-
+        // Enhanced notification for seller with customer details
         await Notification.create({
             userId: shop.owner,
             title: "New Order Received",
-            message: `You have a new order for ${quantity} x ${product.name} (${product.size}) from ${shop.name}. Total: $${totalAmount}. ${customerInfo}`,
+            message: `New order from ${customer.fullName} (${customer.email}, ${customer.phoneNumber}) - Age: ${customer.age || 'Not specified'}, Gender: ${customer.gender}, Location: ${customer.location}. Order: ${quantity} x ${product.name} (${product.size}) from ${shop.name}. Total: $${totalAmount}`,
             type: "new_order",
+            orderId: order.id
+        });
+        
+        // Enhanced notification for customer with shop and owner details
+        await Notification.create({
+            userId: req.user.id,
+            title: "Order Placed Successfully",
+            message: `Your order for ${quantity} x ${product.name} (${product.size}) has been placed at ${shop.name}. Shop owner: ${shopOwner.fullName} (${shopOwner.phoneNumber}). Total: $${totalAmount}. We'll notify you when the order is processed.`,
+            type: "order_placed",
             orderId: order.id
         });
         
@@ -113,19 +125,15 @@ export const updateOrderStatus = async (req, res) => {
         
         await existOrder.update({ status });
         
-        // Get shop and owner details for customer notification
+        // Get product and shop details for enhanced notifications
         const product = await Product.findByPk(existOrder.productId);
         const shop = await Shop.findByPk(product.shop_id);
-        const owner = await User.findByPk(shop.owner);
+        const shopOwner = await User.findByPk(shop.owner);
         
-        const shopInfo = shop && owner ? 
-            `Shop: ${shop.name}, Owner: ${owner.fullName}, Phone: ${owner.phoneNumber}, Location: ${shop.location || 'Not specified'}` 
-            : 'Shop details not available';
-
         const notificationTitle = status === "approved" ? "Order Approved" : "Order Denied";
         const notificationMessage = status === "approved" 
-            ? `Your order for ${existOrder.quantity} x ${product.name} (${product.size}) has been approved! ${shopInfo}`
-            : `Your order for ${existOrder.quantity} x ${product.name} (${product.size}) has been denied. ${shopInfo}`;
+            ? `Your order for ${existOrder.quantity} x ${product.name} (${product.size}) from ${shop.name} has been approved! Contact: ${shopOwner.fullName} (${shopOwner.phoneNumber}). Your order will be processed soon.`
+            : `Your order for ${existOrder.quantity} x ${product.name} (${product.size}) from ${shop.name} has been denied. Contact: ${shopOwner.fullName} (${shopOwner.phoneNumber}) for more information.`;
         
         await Notification.create({
             userId: existOrder.userId,
