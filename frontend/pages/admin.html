@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Angel's M</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .admin-dashboard {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .admin-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+        
+        .admin-header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-left: 4px solid #667eea;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .stat-card h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+        
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #667eea;
+            margin: 0;
+        }
+        
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+        
+        .admin-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            font-weight: 600;
+            font-size: 1.2em;
+        }
+        
+        .section-content {
+            padding: 20px;
+        }
+        
+        .admin-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .admin-btn.secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .admin-btn.danger {
+            background: linear-gradient(135deg, #fc5c7d 0%, #6a82fb 100%);
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .badge.admin { background: #667eea; color: white; }
+        .badge.customer { background: #28a745; color: white; }
+        .badge.seller { background: #ffc107; color: #333; }
+        .badge.delivery { background: #17a2b8; color: white; }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .user-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .user-info strong {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">Angel's M</a>
+            <div class="navbar-nav">
+                <a href="index.html">Home</a>
+                <a href="admin.html" class="active">Admin Dashboard</a>
+                <a href="#products">Products</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+                <div id="nav-user-area">
+                    <a href="login.html" class="btn btn-sm btn-primary">Log In</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Admin Dashboard -->
+    <div class="admin-dashboard">
+        <!-- Admin Header -->
+        <div class="admin-header">
+            <h1>👑 Admin Dashboard</h1>
+            <p>Complete system control and management</p>
+        </div>
+
+        <!-- User Info -->
+        <div class="user-info" id="userInfo">
+            <strong>Welcome, Admin!</strong> You have full system access.
+        </div>
+
+        <!-- Statistics Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Users</h3>
+                <p class="number" id="totalUsers">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Shops</h3>
+                <p class="number" id="totalShops">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Products</h3>
+                <p class="number" id="totalProducts">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Orders</h3>
+                <p class="number" id="totalOrders">0</p>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <button class="admin-btn" onclick="refreshAllData()">🔄 Refresh Data</button>
+            <button class="admin-btn secondary" onclick="showCreateUserModal()">➕ Create User</button>
+            <button class="admin-btn secondary" onclick="showCreateShopModal()">🏪 Create Shop</button>
+            <button class="admin-btn secondary" onclick="showCreateProductModal()">📦 Create Product</button>
+        </div>
+
+        <!-- Admin Grid -->
+        <div class="admin-grid">
+            <!-- Users Management -->
+            <div class="admin-section">
+                <div class="section-header">👥 Users Management</div>
+                <div class="section-content">
+                    <div class="quick-actions">
+                        <button class="admin-btn" onclick="loadUsers()">Load Users</button>
+                        <button class="admin-btn danger" onclick="clearUsers()">Clear All</button>
+                    </div>
+                    <div id="usersTable">
+                        <div class="loading">Click "Load Users" to display data</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shops Management -->
+            <div class="admin-section">
+                <div class="section-header">🏪 Shops Management</div>
+                <div class="section-content">
+                    <div class="quick-actions">
+                        <button class="admin-btn" onclick="loadShops()">Load Shops</button>
+                        <button class="admin-btn danger" onclick="clearShops()">Clear All</button>
+                    </div>
+                    <div id="shopsTable">
+                        <div class="loading">Click "Load Shops" to display data</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Management -->
+            <div class="admin-section">
+                <div class="section-header">📦 Products Management</div>
+                <div class="section-content">
+                    <div class="quick-actions">
+                        <button class="admin-btn" onclick="loadProducts()">Load Products</button>
+                        <button class="admin-btn danger" onclick="clearProducts()">Clear All</button>
+                    </div>
+                    <div id="productsTable">
+                        <div class="loading">Click "Load Products" to display data</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Management -->
+            <div class="admin-section">
+                <div class="section-header">📋 Orders Management</div>
+                <div class="section-content">
+                    <div class="quick-actions">
+                        <button class="admin-btn" onclick="loadOrders()">Load Orders</button>
+                        <button class="admin-btn danger" onclick="clearOrders()">Clear All</button>
+                    </div>
+                    <div id="ordersTable">
+                        <div class="loading">Click "Load Orders" to display data</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script>
+        // Check if user is admin
+        function checkAdminAccess() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // You can add admin role validation here
+            loadUserInfo();
+            refreshAllData();
+        }
+
+        // Load user information
+        async function loadUserInfo() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // Get user info from token (you might need to decode JWT or use a dedicated endpoint)
+                // For now, we'll use a placeholder since getCurrentUser endpoint might not exist
+                document.getElementById('userInfo').innerHTML = `
+                    <strong>Welcome, Admin!</strong> 
+                    <span class="badge admin">Admin</span> - 
+                    Full system access granted
+                `;
+            } catch (error) {
+                console.error('Error loading user info:', error);
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Refresh all data
+        async function refreshAllData() {
+            await Promise.all([
+                loadStats(),
+                loadUsers(),
+                loadShops(),
+                loadProducts(),
+                loadOrders()
+            ]);
+        }
+
+        // Load statistics
+        async function loadStats() {
+            try {
+                const [users, shops, products, orders] = await Promise.all([
+                    api.getAllUsers(),
+                    api.getAllShops(),
+                    api.getAllProducts(),
+                    api.getAllOrders()
+                ]);
+                
+                document.getElementById('totalUsers').textContent = users.length;
+                document.getElementById('totalShops').textContent = shops.length;
+                document.getElementById('totalProducts').textContent = products.length;
+                document.getElementById('totalOrders').textContent = orders.length;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Load users
+        async function loadUsers() {
+            try {
+                const users = await api.getAllUsers();
+                const tableHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${users.map(user => `
+                                <tr>
+                                    <td>${user.fullName}</td>
+                                    <td>${user.email}</td>
+                                    <td><span class="badge ${user.role}">${user.role}</span></td>
+                                    <td>
+                                        <button class="admin-btn" onclick="editUser('${user.id}')">Edit</button>
+                                        <button class="admin-btn danger" onclick="deleteUser('${user.id}')">Delete</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                document.getElementById('usersTable').innerHTML = tableHTML;
+            } catch (error) {
+                document.getElementById('usersTable').innerHTML = 
+                    `<div class="error">Error loading users: ${error.message}</div>`;
+            }
+        }
+
+        // Load shops
+        async function loadShops() {
+            try {
+                const shops = await api.getAllShops();
+                const tableHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Owner</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${shops.map(shop => `
+                                <tr>
+                                    <td>${shop.name}</td>
+                                    <td>${shop.owner}</td>
+                                    <td>
+                                        <button class="admin-btn" onclick="editShop('${shop.id}')">Edit</button>
+                                        <button class="admin-btn danger" onclick="deleteShop('${shop.id}')">Delete</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                document.getElementById('shopsTable').innerHTML = tableHTML;
+            } catch (error) {
+                document.getElementById('shopsTable').innerHTML = 
+                    `<div class="error">Error loading shops: ${error.message}</div>`;
+            }
+        }
+
+        // Load products
+        async function loadProducts() {
+            try {
+                const products = await api.getAllProducts();
+                const tableHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${products.map(product => `
+                                <tr>
+                                    <td>${product.name}</td>
+                                    <td>$${product.price}</td>
+                                    <td>${product.quantity}</td>
+                                    <td>
+                                        <button class="admin-btn" onclick="editProduct('${product.id}')">Edit</button>
+                                        <button class="admin-btn danger" onclick="deleteProduct('${product.id}')">Delete</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                document.getElementById('productsTable').innerHTML = tableHTML;
+            } catch (error) {
+                document.getElementById('productsTable').innerHTML = 
+                    `<div class="error">Error loading products: ${error.message}</div>`;
+            }
+        }
+
+        // Load orders
+        async function loadOrders() {
+            try {
+                const orders = await api.getAllOrders();
+                const tableHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>User ID</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${orders.map(order => `
+                                <tr>
+                                    <td>${order.id.substring(0, 8)}...</td>
+                                    <td>${order.userId.substring(0, 8)}...</td>
+                                    <td>$${order.totalAmount}</td>
+                                    <td><span class="badge">${order.status}</span></td>
+                                    <td>
+                                        <button class="admin-btn" onclick="updateOrderStatus('${order.id}')">Update Status</button>
+                                        <button class="admin-btn danger" onclick="deleteOrder('${order.id}')">Delete</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                document.getElementById('ordersTable').innerHTML = tableHTML;
+            } catch (error) {
+                document.getElementById('ordersTable').innerHTML = 
+                    `<div class="error">Error loading orders: ${error.message}</div>`;
+            }
+        }
+
+        // Placeholder functions for actions
+        function editUser(id) {
+            alert(`Edit user ${id} - Functionality to be implemented`);
+        }
+
+        function deleteUser(id) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                alert(`Delete user ${id} - Functionality to be implemented`);
+            }
+        }
+
+        function editShop(id) {
+            alert(`Edit shop ${id} - Functionality to be implemented`);
+        }
+
+        function deleteShop(id) {
+            if (confirm('Are you sure you want to delete this shop?')) {
+                alert(`Delete shop ${id} - Functionality to be implemented`);
+            }
+        }
+
+        function editProduct(id) {
+            alert(`Edit product ${id} - Functionality to be implemented`);
+        }
+
+        function deleteProduct(id) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                alert(`Delete product ${id} - Functionality to be implemented`);
+            }
+        }
+
+        function updateOrderStatus(id) {
+            const newStatus = prompt('Enter new status (approved/denied):');
+            if (newStatus) {
+                alert(`Update order ${id} to ${newStatus} - Functionality to be implemented`);
+            }
+        }
+
+        function deleteOrder(id) {
+            if (confirm('Are you sure you want to delete this order?')) {
+                alert(`Delete order ${id} - Functionality to be implemented`);
+            }
+        }
+
+        function clearUsers() {
+            document.getElementById('usersTable').innerHTML = 
+                '<div class="loading">Click "Load Users" to display data</div>';
+        }
+
+        function clearShops() {
+            document.getElementById('shopsTable').innerHTML = 
+                '<div class="loading">Click "Load Shops" to display data</div>';
+        }
+
+        function clearProducts() {
+            document.getElementById('productsTable').innerHTML = 
+                '<div class="loading">Click "Load Products" to display data</div>';
+        }
+
+        function clearOrders() {
+            document.getElementById('ordersTable').innerHTML = 
+                '<div class="loading">Click "Load Orders" to display data</div>';
+        }
+
+        function showCreateUserModal() {
+            alert('Create User Modal - Functionality to be implemented');
+        }
+
+        function showCreateShopModal() {
+            alert('Create Shop Modal - Functionality to be implemented');
+        }
+
+        function showCreateProductModal() {
+            alert('Create Product Modal - Functionality to be implemented');
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', checkAdminAccess);
+    </script>
+</body>
+</html>
