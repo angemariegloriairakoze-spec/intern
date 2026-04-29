@@ -1,6 +1,7 @@
 import Order from "../database/models/orders.js";
 import Product from "../database/models/products.js";
 import Shop from "../database/models/shops.js";
+import User from "../database/models/users.js";
 import Notification from "../database/models/notifications.js";
 
 export const getAllOrders = async (req, res) => {
@@ -61,10 +62,16 @@ export const createOrder = async (req, res) => {
             totalAmount: totalAmount
         });
         
+        // Get customer details for seller notification
+        const customer = await User.findByPk(req.user.id);
+        const customerInfo = customer ? 
+            `Customer: ${customer.fullName}, Age: ${customer.age || 'Not specified'}, Gender: ${customer.gender}, Location: ${customer.location}, Phone: ${customer.phoneNumber}` 
+            : 'Customer details not available';
+
         await Notification.create({
             userId: shop.owner,
             title: "New Order Received",
-            message: `You have a new order for ${quantity} x ${product.name} (${product.size}) from ${shop.name}. Total: $${totalAmount}`,
+            message: `You have a new order for ${quantity} x ${product.name} (${product.size}) from ${shop.name}. Total: $${totalAmount}. ${customerInfo}`,
             type: "new_order",
             orderId: order.id
         });
@@ -106,10 +113,19 @@ export const updateOrderStatus = async (req, res) => {
         
         await existOrder.update({ status });
         
+        // Get shop and owner details for customer notification
+        const product = await Product.findByPk(existOrder.productId);
+        const shop = await Shop.findByPk(product.shop_id);
+        const owner = await User.findByPk(shop.owner);
+        
+        const shopInfo = shop && owner ? 
+            `Shop: ${shop.name}, Owner: ${owner.fullName}, Phone: ${owner.phoneNumber}, Location: ${shop.location || 'Not specified'}` 
+            : 'Shop details not available';
+
         const notificationTitle = status === "approved" ? "Order Approved" : "Order Denied";
         const notificationMessage = status === "approved" 
-            ? `Your order for ${existOrder.quantity} x product has been approved!`
-            : `Your order for ${existOrder.quantity} x product has been denied.`;
+            ? `Your order for ${existOrder.quantity} x ${product.name} (${product.size}) has been approved! ${shopInfo}`
+            : `Your order for ${existOrder.quantity} x ${product.name} (${product.size}) has been denied. ${shopInfo}`;
         
         await Notification.create({
             userId: existOrder.userId,
