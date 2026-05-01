@@ -14,15 +14,13 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    assetsDir: 'assets',
-    rollupOptions: {
-      input: {
-        main: './index-react.html'
-      }
-    }
+    assetsDir: 'assets'
   },
   base: process.env.NODE_ENV === 'production' ? './' : '/',
   optimizeDeps: {
-    entries: ['./src/main.jsx']
+    include: ['react', 'react-dom', 'react-router-dom']
+  },
+  esbuild: {
+    jsx: 'automatic'
   }
 })
