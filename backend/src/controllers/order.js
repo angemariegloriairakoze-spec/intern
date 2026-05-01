@@ -11,12 +11,30 @@ export const getAllOrders = async (req, res) => {
         // Get customer and product details for each order
         const ordersWithDetails = await Promise.all(
             allOrders.map(async (order) => {
-                const customer = await User.findByPk(order.userId, {
-                    attributes: ['id', 'fullName', 'email', 'phoneNumber', 'location', 'gender', 'age']
-                });
-                const product = await Product.findByPk(order.productId, {
-                    attributes: ['id', 'name', 'price', 'size']
-                });
+                let customer = null;
+                let product = null;
+                
+                // Only fetch customer if userId exists and is valid
+                if (order.userId && order.userId.trim() !== '') {
+                    try {
+                        customer = await User.findByPk(order.userId, {
+                            attributes: ['id', 'fullName', 'email', 'phoneNumber', 'location', 'gender', 'age']
+                        });
+                    } catch (customerError) {
+                        console.warn(`Failed to fetch customer ${order.userId}:`, customerError.message);
+                    }
+                }
+                
+                // Only fetch product if productId exists and is valid
+                if (order.productId && order.productId.trim() !== '') {
+                    try {
+                        product = await Product.findByPk(order.productId, {
+                            attributes: ['id', 'name', 'price', 'size']
+                        });
+                    } catch (productError) {
+                        console.warn(`Failed to fetch product ${order.productId}:`, productError.message);
+                    }
+                }
                 
                 return {
                     ...order.toJSON(),
@@ -27,8 +45,9 @@ export const getAllOrders = async (req, res) => {
         );
         
         res.status(200).json(ordersWithDetails);
-        console.log("All orders in the system are: ", ordersWithDetails);
+        console.log("All orders in the system are: ", ordersWithDetails.length, 'orders found');
     } catch (error) {
+        console.error('Error in getAllOrders:', error);
         res.status(500).json({ error: error.message });
     }
 };
@@ -38,13 +57,30 @@ export const singleOrder = async (req, res) => {
         const order = await Order.findByPk(req.params.id);
         if (!order) return res.status(404).json({ message: "Order not found" });
         
-        // Get customer and product details
-        const customer = await User.findByPk(order.userId, {
-            attributes: ['id', 'fullName', 'email', 'phoneNumber', 'location', 'gender', 'age']
-        });
-        const product = await Product.findByPk(order.productId, {
-            attributes: ['id', 'name', 'price', 'size']
-        });
+        let customer = null;
+        let product = null;
+        
+        // Only fetch customer if userId exists and is valid
+        if (order.userId && order.userId.trim() !== '') {
+            try {
+                customer = await User.findByPk(order.userId, {
+                    attributes: ['id', 'fullName', 'email', 'phoneNumber', 'location', 'gender', 'age']
+                });
+            } catch (customerError) {
+                console.warn(`Failed to fetch customer ${order.userId}:`, customerError.message);
+            }
+        }
+        
+        // Only fetch product if productId exists and is valid
+        if (order.productId && order.productId.trim() !== '') {
+            try {
+                product = await Product.findByPk(order.productId, {
+                    attributes: ['id', 'name', 'price', 'size']
+                });
+            } catch (productError) {
+                console.warn(`Failed to fetch product ${order.productId}:`, productError.message);
+            }
+        }
         
         const orderWithDetails = {
             ...order.toJSON(),
@@ -54,6 +90,7 @@ export const singleOrder = async (req, res) => {
         
         res.status(200).json(orderWithDetails);
     } catch (error) {
+        console.error('Error in singleOrder:', error);
         res.status(500).json({ error: error.message });
     }
 };
@@ -240,12 +277,30 @@ export const getSellerOrders = async (req, res) => {
         // Get customer and product details for each order
         const ordersWithDetails = await Promise.all(
             sellerOrders.map(async (order) => {
-                const customer = await User.findByPk(order.userId, {
-                    attributes: ['id', 'fullName', 'email', 'phoneNumber', 'location', 'gender', 'age']
-                });
-                const product = await Product.findByPk(order.productId, {
-                    attributes: ['id', 'name', 'price', 'size', 'quantity']
-                });
+                let customer = null;
+                let product = null;
+                
+                // Only fetch customer if userId exists and is valid
+                if (order.userId && order.userId.trim() !== '') {
+                    try {
+                        customer = await User.findByPk(order.userId, {
+                            attributes: ['id', 'fullName', 'email', 'phoneNumber', 'location', 'gender', 'age']
+                        });
+                    } catch (customerError) {
+                        console.warn(`Failed to fetch customer ${order.userId}:`, customerError.message);
+                    }
+                }
+                
+                // Only fetch product if productId exists and is valid
+                if (order.productId && order.productId.trim() !== '') {
+                    try {
+                        product = await Product.findByPk(order.productId, {
+                            attributes: ['id', 'name', 'price', 'size', 'quantity']
+                        });
+                    } catch (productError) {
+                        console.warn(`Failed to fetch product ${order.productId}:`, productError.message);
+                    }
+                }
                 
                 return {
                     ...order.toJSON(),
@@ -256,8 +311,9 @@ export const getSellerOrders = async (req, res) => {
         );
         
         res.status(200).json(ordersWithDetails);
-        console.log(`Orders for seller ${req.user.id}:`, ordersWithDetails);
+        console.log(`Orders for seller ${req.user.id}:`, ordersWithDetails.length, 'orders found');
     } catch (error) {
+        console.error('Error in getSellerOrders:', error);
         res.status(500).json({ error: error.message });
     }
 };

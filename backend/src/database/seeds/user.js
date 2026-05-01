@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 export const seedUsers = async () => {
     const hashPassword = await bcrypt.hash("password123",10)
     const adminHashPassword = await bcrypt.hash("angel@23",10)
+    const sellerHashPassword = await bcrypt.hash("password123",10)
     const users = [
       {
         fullName: "Kamayirese",
@@ -27,6 +28,17 @@ export const seedUsers = async () => {
         password: hashPassword,
         age:20,
         date_of_birth:"01/02/2000",
+        role:"seller"
+      },
+      {
+        fullName: "Test Seller",
+        email: "seller@test.com",
+        phoneNumber: "0781234568",
+        location: "Kigali",
+        gender: "male",
+        password: sellerHashPassword,
+        age:28,
+        date_of_birth:"01/01/1996",
         role:"seller"
       },
       {
