@@ -14,7 +14,15 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    assetsDir: 'assets'
+    assetsDir: 'assets',
+    rollupOptions: {
+      input: {
+        main: './index-react.html'
+      }
+    }
   },
-  base: process.env.NODE_ENV === 'production' ? './' : '/'
+  base: process.env.NODE_ENV === 'production' ? './' : '/',
+  optimizeDeps: {
+    entries: ['./src/main.jsx']
+  }
 })
