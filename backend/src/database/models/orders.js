@@ -59,4 +59,20 @@ Order.init({
     timestamps:true
 });
 
+// Define associations
+Order.associate = (models) => {
+    Order.belongsTo(models.User, {
+        foreignKey: 'userId',
+        as: 'customer'
+    });
+    Order.belongsTo(models.Product, {
+        foreignKey: 'productId',
+        as: 'product'
+    });
+    Order.belongsTo(models.User, {
+        foreignKey: 'sellerId',
+        as: 'seller'
+    });
+};
+
 export default Order;

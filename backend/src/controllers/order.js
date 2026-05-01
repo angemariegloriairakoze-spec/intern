@@ -7,8 +7,27 @@ import Notification from "../database/models/notifications.js";
 export const getAllOrders = async (req, res) => {
     try {
         const allOrders = await Order.findAll();
-        res.status(200).json(allOrders);
-        console.log("All orders in the system are: ", allOrders);
+        
+        // Get customer and product details for each order
+        const ordersWithDetails = await Promise.all(
+            allOrders.map(async (order) => {
+                const customer = await User.findByPk(order.userId, {
+                    attributes: ['id', 'fullName', 'email', 'phoneNumber', 'location', 'gender', 'age']
+                });
+                const product = await Product.findByPk(order.productId, {
+                    attributes: ['id', 'name', 'price', 'size']
+                });
+                
+                return {
+                    ...order.toJSON(),
+                    customer: customer ? customer.toJSON() : null,
+                    product: product ? product.toJSON() : null
+                };
+            })
+        );
+        
+        res.status(200).json(ordersWithDetails);
+        console.log("All orders in the system are: ", ordersWithDetails);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -18,7 +37,22 @@ export const singleOrder = async (req, res) => {
     try {
         const order = await Order.findByPk(req.params.id);
         if (!order) return res.status(404).json({ message: "Order not found" });
-        res.status(200).json(order);
+        
+        // Get customer and product details
+        const customer = await User.findByPk(order.userId, {
+            attributes: ['id', 'fullName', 'email', 'phoneNumber', 'location', 'gender', 'age']
+        });
+        const product = await Product.findByPk(order.productId, {
+            attributes: ['id', 'name', 'price', 'size']
+        });
+        
+        const orderWithDetails = {
+            ...order.toJSON(),
+            customer: customer ? customer.toJSON() : null,
+            product: product ? product.toJSON() : null
+        };
+        
+        res.status(200).json(orderWithDetails);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -70,6 +104,31 @@ export const createOrder = async (req, res) => {
             totalAmount: totalAmount
         });
         
+        // Include customer details in the order response
+        const orderResponse = {
+            ...order.toJSON(),
+            customer: {
+                id: customer.id,
+                fullName: customer.fullName,
+                email: customer.email,
+                phoneNumber: customer.phoneNumber,
+                location: customer.location,
+                gender: customer.gender,
+                age: customer.age
+            },
+            product: {
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                size: product.size
+            },
+            shop: {
+                id: shop.id,
+                name: shop.name,
+                owner: shopOwner.fullName
+            }
+        };
+        
         // Enhanced notification for seller with customer details
         await Notification.create({
             userId: shop.owner,
@@ -88,7 +147,7 @@ export const createOrder = async (req, res) => {
             orderId: order.id
         });
         
-        res.status(201).json({ message: "Order created successfully", order });
+        res.status(201).json({ message: "Order created successfully", order: orderResponse });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
