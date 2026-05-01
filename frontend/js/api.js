@@ -43,16 +43,6 @@ const api = {
         }).then(res => res.json());
     },
 
-    getCurrentUser: async function() {
-        return fetch(`${API_URL}/getSingleUser/current`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem("token")}`
-            }
-        }).then(res => res.json());
-    },
-
     updateUser: async function(userId, userData) {
         return fetch(`${API_URL}/updateUser/${userId}`, {
             method: 'PUT',
