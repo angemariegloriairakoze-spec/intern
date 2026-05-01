@@ -19,6 +19,108 @@ orderRoutes.post("/createOrder", protect, authorize("admin", "customer"), create
 orderRoutes.put("/updateOrderStatus/:id", protect, authorize("admin", "seller"), updateOrderStatus);
 orderRoutes.delete("/deleteOrder/:id", protect, authorize("admin", "customer"), deleteOrder);
 orderRoutes.get("/getCustomerOrders", protect, authorize("admin", "customer"), getCustomerOrders);
+/**
+ * @swagger
+ * /api/getSellerOrders:
+ *   get:
+ *     summary: Get all orders for the authenticated seller's products
+ *     description: Returns a list of orders for products owned by the authenticated seller, including customer details
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved seller's orders
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     format: uuid
+ *                     example: "123e4567-e89b-12d3-a456-426614174000"
+ *                   userId:
+ *                     type: string
+ *                     format: uuid
+ *                     example: "456e7890-e89b-12d3-a456-426614174111"
+ *                   productId:
+ *                     type: string
+ *                     format: uuid
+ *                     example: "789e0123-e89b-12d3-a456-426614174222"
+ *                   sellerId:
+ *                     type: string
+ *                     format: uuid
+ *                     example: "012e3456-e89b-12d3-a456-426614174333"
+ *                   quantity:
+ *                     type: integer
+ *                     example: 2
+ *                   status:
+ *                     type: string
+ *                     enum: [pending, approved, denied]
+ *                     example: "pending"
+ *                   orderDate:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2024-01-15T10:30:00Z"
+ *                   totalAmount:
+ *                     type: number
+ *                     format: decimal
+ *                     example: 50.00
+ *                   customer:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         format: uuid
+ *                         example: "456e7890-e89b-12d3-a456-426614174111"
+ *                       fullName:
+ *                         type: string
+ *                         example: "John Doe"
+ *                       email:
+ *                         type: string
+ *                         example: "john@example.com"
+ *                       phoneNumber:
+ *                         type: string
+ *                         example: "+1234567890"
+ *                       location:
+ *                         type: string
+ *                         example: "New York"
+ *                       gender:
+ *                         type: string
+ *                         example: "male"
+ *                       age:
+ *                         type: integer
+ *                         example: 25
+ *                   product:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         format: uuid
+ *                         example: "789e0123-e89b-12d3-a456-426614174222"
+ *                       name:
+ *                         type: string
+ *                         example: "Classic Pants"
+ *                       price:
+ *                         type: number
+ *                         format: decimal
+ *                         example: 25.00
+ *                       size:
+ *                         type: string
+ *                         example: "Large"
+ *                       quantity:
+ *                         type: integer
+ *                         example: 100
+ *       401:
+ *         description: Unauthorized - Authentication required
+ *       403:
+ *         description: Forbidden - Seller access required
+ *       500:
+ *         description: Internal server error
+ */
 orderRoutes.get("/getSellerOrders", protect, authorize("admin", "seller"), getSellerOrders);
 
 export default orderRoutes;

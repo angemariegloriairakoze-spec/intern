@@ -232,8 +232,31 @@ export const getCustomerOrders = async (req, res) => {
 
 export const getSellerOrders = async (req, res) => {
     try {
-        const sellerOrders = await Order.findAll({ where: { sellerId: req.user.id } });
-        res.status(200).json(sellerOrders);
+        // Get orders only for this seller's products
+        const sellerOrders = await Order.findAll({ 
+            where: { sellerId: req.user.id } 
+        });
+        
+        // Get customer and product details for each order
+        const ordersWithDetails = await Promise.all(
+            sellerOrders.map(async (order) => {
+                const customer = await User.findByPk(order.userId, {
+                    attributes: ['id', 'fullName', 'email', 'phoneNumber', 'location', 'gender', 'age']
+                });
+                const product = await Product.findByPk(order.productId, {
+                    attributes: ['id', 'name', 'price', 'size', 'quantity']
+                });
+                
+                return {
+                    ...order.toJSON(),
+                    customer: customer ? customer.toJSON() : null,
+                    product: product ? product.toJSON() : null
+                };
+            })
+        );
+        
+        res.status(200).json(ordersWithDetails);
+        console.log(`Orders for seller ${req.user.id}:`, ordersWithDetails);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
