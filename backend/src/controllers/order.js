@@ -330,8 +330,81 @@ export const deleteOrder = async (req, res) => {
 export const getCustomerOrders = async (req, res) => {
     try {
         const customerOrders = await Order.findAll({ where: { userId: req.user.id } });
-        res.status(200).json(customerOrders);
+        
+        // Get seller and product details for each order
+        const ordersWithDetails = await Promise.all(
+            customerOrders.map(async (order) => {
+                let seller = null;
+                let product = null;
+                let customer = null;
+                
+                // Only fetch seller if sellerId exists and is valid
+                if (order.sellerId && order.sellerId.trim() !== '') {
+                    try {
+                        seller = await User.findByPk(order.sellerId, {
+                            attributes: ['id', 'fullName', 'email', 'phoneNumber']
+                        });
+                    } catch (sellerError) {
+                        console.warn(`Failed to fetch seller ${order.sellerId}:`, sellerError.message);
+                    }
+                }
+                
+                // Only fetch product if productId exists and is valid
+                if (order.productId && order.productId.trim() !== '') {
+                    try {
+                        product = await Product.findByPk(order.productId, {
+                            attributes: ['id', 'name', 'price', 'size']
+                        });
+                    } catch (productError) {
+                        console.warn(`Failed to fetch product ${order.productId}:`, productError.message);
+                    }
+                }
+                
+                // Only fetch customer if userId exists and is valid
+                if (order.userId && order.userId.trim() !== '') {
+                    try {
+                        customer = await User.findByPk(order.userId, {
+                            attributes: ['id', 'fullName', 'email', 'phoneNumber', 'location', 'gender', 'age']
+                        });
+                    } catch (customerError) {
+                        console.warn(`Failed to fetch customer ${order.userId}:`, customerError.message);
+                    }
+                }
+                
+                return {
+                    id: order.id,
+                    quantity: order.quantity,
+                    status: order.status,
+                    orderDate: order.orderDate,
+                    totalAmount: order.totalAmount,
+                    createdAt: order.createdAt,
+                    updatedAt: order.updatedAt,
+                    customer: customer ? {
+                        fullName: customer.fullName,
+                        email: customer.email,
+                        phoneNumber: customer.phoneNumber,
+                        location: customer.location,
+                        gender: customer.gender,
+                        age: customer.age
+                    } : null,
+                    product: product ? {
+                        name: product.name,
+                        price: product.price,
+                        size: product.size
+                    } : null,
+                    seller: seller ? {
+                        fullName: seller.fullName,
+                        email: seller.email,
+                        phoneNumber: seller.phoneNumber
+                    } : null
+                };
+            })
+        );
+        
+        res.status(200).json(ordersWithDetails);
+        console.log(`Orders for customer ${req.user.id}:`, ordersWithDetails.length, 'orders found');
     } catch (error) {
+        console.error('Error in getCustomerOrders:', error);
         res.status(500).json({ error: error.message });
     }
 };
