@@ -3,6 +3,7 @@ import Product from "../database/models/products.js";
 import Shop from "../database/models/shops.js";
 import User from "../database/models/users.js";
 import Notification from "../database/models/notifications.js";
+import sequelize from "../config/db.js";
 
 export const getAllOrders = async (req, res) => {
     try {
@@ -13,6 +14,7 @@ export const getAllOrders = async (req, res) => {
             allOrders.map(async (order) => {
                 let customer = null;
                 let product = null;
+                let seller = null;
                 
                 // Only fetch customer if userId exists and is valid
                 if (order.userId && order.userId.trim() !== '') {
@@ -36,10 +38,43 @@ export const getAllOrders = async (req, res) => {
                     }
                 }
                 
+                // Only fetch seller if sellerId exists and is valid
+                if (order.sellerId && order.sellerId.trim() !== '') {
+                    try {
+                        seller = await User.findByPk(order.sellerId, {
+                            attributes: ['id', 'fullName', 'email', 'phoneNumber']
+                        });
+                    } catch (sellerError) {
+                        console.warn(`Failed to fetch seller ${order.sellerId}:`, sellerError.message);
+                    }
+                }
+                
                 return {
-                    ...order.toJSON(),
-                    customer: customer ? customer.toJSON() : null,
-                    product: product ? product.toJSON() : null
+                    id: order.id,
+                    quantity: order.quantity,
+                    status: order.status,
+                    orderDate: order.orderDate,
+                    totalAmount: order.totalAmount,
+                    createdAt: order.createdAt,
+                    updatedAt: order.updatedAt,
+                    customer: customer ? {
+                        fullName: customer.fullName,
+                        email: customer.email,
+                        phoneNumber: customer.phoneNumber,
+                        location: customer.location,
+                        gender: customer.gender,
+                        age: customer.age
+                    } : null,
+                    product: product ? {
+                        name: product.name,
+                        price: product.price,
+                        size: product.size
+                    } : null,
+                    seller: seller ? {
+                        fullName: seller.fullName,
+                        email: seller.email,
+                        phoneNumber: seller.phoneNumber
+                    } : null
                 };
             })
         );
@@ -59,6 +94,7 @@ export const singleOrder = async (req, res) => {
         
         let customer = null;
         let product = null;
+        let seller = null;
         
         // Only fetch customer if userId exists and is valid
         if (order.userId && order.userId.trim() !== '') {
@@ -82,10 +118,43 @@ export const singleOrder = async (req, res) => {
             }
         }
         
+        // Only fetch seller if sellerId exists and is valid
+        if (order.sellerId && order.sellerId.trim() !== '') {
+            try {
+                seller = await User.findByPk(order.sellerId, {
+                    attributes: ['id', 'fullName', 'email', 'phoneNumber']
+                });
+            } catch (sellerError) {
+                console.warn(`Failed to fetch seller ${order.sellerId}:`, sellerError.message);
+            }
+        }
+        
         const orderWithDetails = {
-            ...order.toJSON(),
-            customer: customer ? customer.toJSON() : null,
-            product: product ? product.toJSON() : null
+            id: order.id,
+            quantity: order.quantity,
+            status: order.status,
+            orderDate: order.orderDate,
+            totalAmount: order.totalAmount,
+            createdAt: order.createdAt,
+            updatedAt: order.updatedAt,
+            customer: customer ? {
+                fullName: customer.fullName,
+                email: customer.email,
+                phoneNumber: customer.phoneNumber,
+                location: customer.location,
+                gender: customer.gender,
+                age: customer.age
+            } : null,
+            product: product ? {
+                name: product.name,
+                price: product.price,
+                size: product.size
+            } : null,
+            seller: seller ? {
+                fullName: seller.fullName,
+                email: seller.email,
+                phoneNumber: seller.phoneNumber
+            } : null
         };
         
         res.status(200).json(orderWithDetails);
@@ -269,9 +338,11 @@ export const getCustomerOrders = async (req, res) => {
 
 export const getSellerOrders = async (req, res) => {
     try {
-        // Get orders only for this seller's products
+        // Get orders only for this seller's products - ensure proper filtering
         const sellerOrders = await Order.findAll({ 
-            where: { sellerId: req.user.id } 
+            where: { 
+                sellerId: req.user.id
+            }
         });
         
         // Get customer and product details for each order
@@ -279,6 +350,7 @@ export const getSellerOrders = async (req, res) => {
             sellerOrders.map(async (order) => {
                 let customer = null;
                 let product = null;
+                let seller = null;
                 
                 // Only fetch customer if userId exists and is valid
                 if (order.userId && order.userId.trim() !== '') {
@@ -302,10 +374,44 @@ export const getSellerOrders = async (req, res) => {
                     }
                 }
                 
+                // Only fetch seller if sellerId exists and is valid
+                if (order.sellerId && order.sellerId.trim() !== '') {
+                    try {
+                        seller = await User.findByPk(order.sellerId, {
+                            attributes: ['id', 'fullName', 'email', 'phoneNumber']
+                        });
+                    } catch (sellerError) {
+                        console.warn(`Failed to fetch seller ${order.sellerId}:`, sellerError.message);
+                    }
+                }
+                
                 return {
-                    ...order.toJSON(),
-                    customer: customer ? customer.toJSON() : null,
-                    product: product ? product.toJSON() : null
+                    id: order.id,
+                    quantity: order.quantity,
+                    status: order.status,
+                    orderDate: order.orderDate,
+                    totalAmount: order.totalAmount,
+                    createdAt: order.createdAt,
+                    updatedAt: order.updatedAt,
+                    customer: customer ? {
+                        fullName: customer.fullName,
+                        email: customer.email,
+                        phoneNumber: customer.phoneNumber,
+                        location: customer.location,
+                        gender: customer.gender,
+                        age: customer.age
+                    } : null,
+                    product: product ? {
+                        name: product.name,
+                        price: product.price,
+                        size: product.size,
+                        quantity: product.quantity
+                    } : null,
+                    seller: seller ? {
+                        fullName: seller.fullName,
+                        email: seller.email,
+                        phoneNumber: seller.phoneNumber
+                    } : null
                 };
             })
         );

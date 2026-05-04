@@ -24,7 +24,7 @@ orderRoutes.get("/getCustomerOrders", protect, authorize("admin", "customer"), g
  * /api/getSellerOrders:
  *   get:
  *     summary: Get all orders for the authenticated seller's products
- *     description: Returns a list of orders for products owned by the authenticated seller, including customer details
+ *     description: Returns a list of orders for products owned by the authenticated seller, including full customer and product details (no user IDs)
  *     tags: [Orders]
  *     security:
  *       - bearerAuth: []
@@ -42,18 +42,6 @@ orderRoutes.get("/getCustomerOrders", protect, authorize("admin", "customer"), g
  *                     type: string
  *                     format: uuid
  *                     example: "123e4567-e89b-12d3-a456-426614174000"
- *                   userId:
- *                     type: string
- *                     format: uuid
- *                     example: "456e7890-e89b-12d3-a456-426614174111"
- *                   productId:
- *                     type: string
- *                     format: uuid
- *                     example: "789e0123-e89b-12d3-a456-426614174222"
- *                   sellerId:
- *                     type: string
- *                     format: uuid
- *                     example: "012e3456-e89b-12d3-a456-426614174333"
  *                   quantity:
  *                     type: integer
  *                     example: 2
@@ -69,13 +57,18 @@ orderRoutes.get("/getCustomerOrders", protect, authorize("admin", "customer"), g
  *                     type: number
  *                     format: decimal
  *                     example: 50.00
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2024-01-15T10:30:00Z"
+ *                   updatedAt:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2024-01-15T10:30:00Z"
  *                   customer:
  *                     type: object
+ *                     description: Full customer information (no user ID)
  *                     properties:
- *                       id:
- *                         type: string
- *                         format: uuid
- *                         example: "456e7890-e89b-12d3-a456-426614174111"
  *                       fullName:
  *                         type: string
  *                         example: "John Doe"
@@ -96,11 +89,8 @@ orderRoutes.get("/getCustomerOrders", protect, authorize("admin", "customer"), g
  *                         example: 25
  *                   product:
  *                     type: object
+ *                     description: Full product information (no product ID)
  *                     properties:
- *                       id:
- *                         type: string
- *                         format: uuid
- *                         example: "789e0123-e89b-12d3-a456-426614174222"
  *                       name:
  *                         type: string
  *                         example: "Classic Pants"
@@ -114,6 +104,19 @@ orderRoutes.get("/getCustomerOrders", protect, authorize("admin", "customer"), g
  *                       quantity:
  *                         type: integer
  *                         example: 100
+ *                   seller:
+ *                     type: object
+ *                     description: Full seller information (no seller ID)
+ *                     properties:
+ *                       fullName:
+ *                         type: string
+ *                         example: "Jane Smith"
+ *                       email:
+ *                         type: string
+ *                         example: "jane@example.com"
+ *                       phoneNumber:
+ *                         type: string
+ *                         example: "+1234567891"
  *       401:
  *         description: Unauthorized - Authentication required
  *       403:
