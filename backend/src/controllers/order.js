@@ -310,7 +310,6 @@ export const updateOrderStatus = async (req, res) => {
         
         // Get full user details for the response
         let customer = null;
-        let product = null;
         let seller = null;
         
         // Only fetch customer if userId exists and is valid
@@ -324,16 +323,7 @@ export const updateOrderStatus = async (req, res) => {
             }
         }
         
-        // Only fetch product if productId exists and is valid
-        if (existOrder.productId && existOrder.productId.trim() !== '') {
-            try {
-                product = await Product.findByPk(existOrder.productId, {
-                    attributes: ['id', 'name', 'price', 'size']
-                });
-            } catch (productError) {
-                console.warn(`Failed to fetch product ${existOrder.productId}:`, productError.message);
-            }
-        }
+        // Product is already fetched above for notifications
         
         // Only fetch seller if sellerId exists and is valid
         if (existOrder.sellerId && existOrder.sellerId.trim() !== '') {
