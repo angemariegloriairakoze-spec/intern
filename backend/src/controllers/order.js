@@ -308,7 +308,73 @@ export const updateOrderStatus = async (req, res) => {
             orderId: existOrder.id
         });
         
-        res.status(200).json({ message: `Order ${status} successfully`, existOrder });
+        // Get full user details for the response
+        let customer = null;
+        let product = null;
+        let seller = null;
+        
+        // Only fetch customer if userId exists and is valid
+        if (existOrder.userId && existOrder.userId.trim() !== '') {
+            try {
+                customer = await User.findByPk(existOrder.userId, {
+                    attributes: ['id', 'fullName', 'email', 'phoneNumber', 'location', 'gender', 'age']
+                });
+            } catch (customerError) {
+                console.warn(`Failed to fetch customer ${existOrder.userId}:`, customerError.message);
+            }
+        }
+        
+        // Only fetch product if productId exists and is valid
+        if (existOrder.productId && existOrder.productId.trim() !== '') {
+            try {
+                product = await Product.findByPk(existOrder.productId, {
+                    attributes: ['id', 'name', 'price', 'size']
+                });
+            } catch (productError) {
+                console.warn(`Failed to fetch product ${existOrder.productId}:`, productError.message);
+            }
+        }
+        
+        // Only fetch seller if sellerId exists and is valid
+        if (existOrder.sellerId && existOrder.sellerId.trim() !== '') {
+            try {
+                seller = await User.findByPk(existOrder.sellerId, {
+                    attributes: ['id', 'fullName', 'email', 'phoneNumber']
+                });
+            } catch (sellerError) {
+                console.warn(`Failed to fetch seller ${existOrder.sellerId}:`, sellerError.message);
+            }
+        }
+        
+        const orderResponse = {
+            id: existOrder.id,
+            quantity: existOrder.quantity,
+            status: existOrder.status,
+            orderDate: existOrder.orderDate,
+            totalAmount: existOrder.totalAmount,
+            createdAt: existOrder.createdAt,
+            updatedAt: existOrder.updatedAt,
+            customer: customer ? {
+                fullName: customer.fullName,
+                email: customer.email,
+                phoneNumber: customer.phoneNumber,
+                location: customer.location,
+                gender: customer.gender,
+                age: customer.age
+            } : null,
+            product: product ? {
+                name: product.name,
+                price: product.price,
+                size: product.size
+            } : null,
+            seller: seller ? {
+                fullName: seller.fullName,
+                email: seller.email,
+                phoneNumber: seller.phoneNumber
+            } : null
+        };
+        
+        res.status(200).json({ message: `Order ${status} successfully`, order: orderResponse });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
