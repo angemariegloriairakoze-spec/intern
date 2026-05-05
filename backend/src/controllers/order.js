@@ -212,9 +212,14 @@ export const createOrder = async (req, res) => {
         
         // Include customer details in the order response
         const orderResponse = {
-            ...order.toJSON(),
+            id: order.id,
+            quantity: order.quantity,
+            status: order.status,
+            orderDate: order.orderDate,
+            totalAmount: order.totalAmount,
+            createdAt: order.createdAt,
+            updatedAt: order.updatedAt,
             customer: {
-                id: customer.id,
                 fullName: customer.fullName,
                 email: customer.email,
                 phoneNumber: customer.phoneNumber,
@@ -223,15 +228,14 @@ export const createOrder = async (req, res) => {
                 age: customer.age
             },
             product: {
-                id: product.id,
                 name: product.name,
                 price: product.price,
                 size: product.size
             },
-            shop: {
-                id: shop.id,
-                name: shop.name,
-                owner: shopOwner.fullName
+            seller: {
+                fullName: shopOwner.fullName,
+                email: shopOwner.email,
+                phoneNumber: shopOwner.phoneNumber
             }
         };
         
